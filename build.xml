@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Nov 25, 2013 8:19:03 PM                                                        
+
+     project    
+     description
+                   
+     bpaulin                                                                
+     ====================================================================== -->
+<project name="project" default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <description>
+            description
+    </description>
+	
+	<path id="test.ivy.classpath">
+		<fileset dir="lib">
+    		<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- ================================= 
+          target: init              
+         ================================= -->
+    <target name="init" description="Init">
+    	<ivy:settings file="ivysettings.xml"/>
+    	<ivy:info property="ivyinfo" />
+    	<echoproperties prefix="ivyinfo"/>
+    </target>
+
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="init, clean, compile" description="description">
+    	
+    	<jar jarfile="target/ivy-test.jar" basedir="${basedir}/target/classes">
+    	</jar>
+    	<tstamp>
+    	    <format property="now" pattern="yyyyMMddHHmmss"/>
+    	</tstamp>
+    	<ivy:publish artifactspattern="target/[artifact].[ext]" 
+    						resolver="public"
+    	                    pubrevision="1.0-SNAPSHOT"
+    	                    pubdate="${now}"
+    	                    status="integration"
+    						overwrite="true"
+    	                    forcedeliver="true"
+    	    />
+    	    <echo message="project ${ant.project.name} published locally" />
+    </target>
+	
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" depends="depends" description="description">
+    	<mkdir dir="target/classes"/>
+    	<javac srcdir="src"
+    	         destdir="target/classes"
+    	         classpathref="test.ivy.classpath"/>
+    </target>
+
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="depends">
+    	<ivy:retrieve />
+    </target>
+	
+	<target name="clean">
+		<delete dir="target">
+		</delete>
+		<delete dir="lib"></delete>
+	</target>
+
+</project>
